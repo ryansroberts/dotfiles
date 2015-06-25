@@ -27,7 +27,9 @@
                                      ess
                                      evernote
                                      fsharp
-                                     company-mode
+                                     auto-completion
+                                     syntax-checking
+                                     org
                                      dockerfile
                                      floobits
                                      slime
@@ -38,6 +40,10 @@
                                      colors
                                      windows-scripts
                                      themes-megapack
+                                     eyebrowse
+                                     shell
+                                     pandoc
+                                     emoji
                                     )
  ;; A list of packages and/or extensions that will not be install and loaded.
  dotspacemacs-excluded-packages '()
@@ -92,7 +98,7 @@
  ;; If non-nil smartparens-strict-mode will be enabled in programming modes.
  dotspacemacs-smartparens-strict-mode t
  ;; If non nil advises quit functions to keep server open when quitting.
- dotspacemacs-persistent-server nil
+ dotspacemacs-persistent-server t
  ;; The default package repository used if no explicit repository has been
  ;; specified with an installed package.
  ;; Not used for now.
@@ -103,9 +109,13 @@
  scroll-bar-mode nil
  show-trailing-whitespace nil
 
+
+
  omnisharp-server-executable-path "/Users/ryanroberts/code/OmnisharpServer/OmniSharp/bin/Debug/OmniSharp.exe"
  golden-ratio-mode t
  helm-display-header-line nil
+ inferior-fsharp-program "/usr/bin/fsharpi --readline-"
+ fsharp-build-command "/usr/bin/xbuild /nologo"
 )
 
 ;; Initialization Hooks
@@ -156,8 +166,20 @@
     ;; (define-derived-mode flow-mode js2-mode "Flow"
     ;;   "JavaScript with Flow type checking")
 
+(global-company-mode)
+(setq-default dotspacemacs-configuration-layers
+  '(auto-completion :variables
+                    auto-completion-enable-company-help-tooltip t))
 
-  (global-set-key (kbd "§") 'helm-notsomini)
+(global-set-key (kbd "§") 'helm-notsomini)
+
+(defun smaller-font-change ()
+  "Set current buffer to use variable-width font."
+  (variable-pitch-mode 1)
+  (text-scale-decrease 0.5 )
+)
+
+(add-hook 'compilation-mode-hook 'smaller-font-change)
 )
 
 ;; Custom variables
@@ -177,7 +199,9 @@
  '(ahs-idle-interval 0.25)
  '(ahs-idle-timer 0 t)
  '(ahs-inhibit-face-list nil)
+ '(hexl-bits 32)
  '(js2-include-node-externs t)
+ '(magit-use-overlays nil)
  '(ring-bell-function (quote ignore) t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

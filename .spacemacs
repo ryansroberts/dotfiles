@@ -12,11 +12,10 @@
  ;; List of configuration layers to load.
  dotspacemacs-configuration-layers '(gubbins
                                      pretty
-                                     git
                                      fasd
                                      dash
                                      osx
-                                     auctex
+                                     latex
                                      restclient
                                      twitter
                                      javascript
@@ -44,6 +43,9 @@
                                      shell
                                      pandoc
                                      emoji
+                                     github
+                                     git
+                                     version-control
                                     )
  ;; A list of packages and/or extensions that will not be install and loaded.
  dotspacemacs-excluded-packages '()

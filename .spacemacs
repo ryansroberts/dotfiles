@@ -74,6 +74,17 @@
  dotspacemacs-command-key ":"
  ;; Guide-key delay in seconds. The Guide-key is the popup buffer listing
  ;; the commands bound to the current keystrokes.
+;; List of themes, the first of the list is loaded when spacemacs starts.
+;; Press <SPC> T n to cycle to the next theme in the list (works great
+;; with 2 themes variants, one dark and one light)
+dotspacemacs-themes '(gruvbox
+                      monokai
+                      solarized-dark
+                      solarized-light
+                      spacemacs-dark
+                      spacemacs-light
+                      leuven
+                         zenburn)
  dotspacemacs-guide-key-delay 0.4
  ;; If non nil the frame is fullscreen when Emacs starts up (Emacs 24.4+ only).
  dotspacemacs-fullscreen-at-startup nil
@@ -111,9 +122,8 @@
  scroll-bar-mode nil
  show-trailing-whitespace nil
 
+ dotspacemacs-search-tools '("pt" "ack" "grep")
 
-
- omnisharp-server-executable-path "/Users/ryanroberts/code/OmnisharpServer/OmniSharp/bin/Debug/OmniSharp.exe"
  golden-ratio-mode t
  helm-display-header-line nil
  inferior-fsharp-program "/usr/bin/fsharpi --readline-"
@@ -131,58 +141,27 @@
 
 (defun dotspacemacs/config ()
 ;;Bigger, fatter helm mini menu that includes projectile files and pwd content
-(defun helm-notsomini ()
-  "Preconfigured `helm'."
-  (interactive)
-  (condition-case nil
-    (if (projectile-project-root)
-        ;; add project files and buffers when in project
-        (helm-other-buffer '(helm-c-source-buffers-list
-                             helm-c-source-recentf
-                             helm-source-projectile-files-list
-                             helm-c-source-files-in-current-dir
-                             helm-c-source-file-name-history
-                             helm-source-projectile-directories-list
-                             helm-source-projectile-projects
-                             helm-c-source-buffer-not-found)
-                           "*helm morestuff*")
-      ;; otherwise show buffers and projectile projects
-        (helm-other-buffer '(helm-c-source-buffers-list
-                       helm-c-source-recentf
-                       helm-c-source-files-in-current-dir
-                       helm-c-source-file-name-history
-                       helm-c-source-bookmarks
-                       helm-source-projectile-projects
-                       helm-c-source-buffer-not-found)
-                     "*helm morestuff*"))
-    ;; fall back to helm mini if an error occurs (usually in projectile-project-root)
-    (error (helm-mini))))
-
-    ;; (flycheck-define-checker javascript-flow
-    ;;     "Static type checking using Flow."
-    ;;     :command ("flow" "--json" source-original)
-    ;;     :error-parser flycheck-parse-flow
-    ;;     :modes flow-mode)
-    ;; (add-to-list 'flycheck-checkers 'javascript-flow)
-
-    ;; (define-derived-mode flow-mode js2-mode "Flow"
-    ;;   "JavaScript with Flow type checking")
-
+(require 'helm-projectile)
+(setq helm-mini-default-sources '(helm-source-buffers-list
+                                  helm-source-recentf
+                                  helm-source-bookmarks
+                                  helm-source-projectile-files-list
+                                  helm-source-projectile-projects
+                                  helm-source-buffer-not-found))
 (global-company-mode)
 (setq-default dotspacemacs-configuration-layers
   '(auto-completion :variables
                     auto-completion-enable-company-help-tooltip t))
 
-(global-set-key (kbd "§") 'helm-notsomini)
+(global-set-key (kbd "§") 'helm-mini)
 
 (defun smaller-font-change ()
   "Set current buffer to use variable-width font."
   (variable-pitch-mode 1)
   (text-scale-decrease 0.5 )
+  )
 )
 
-(add-hook 'compilation-mode-hook 'smaller-font-change)
-)
 
 ;; Custom variables
 ;; ----------------

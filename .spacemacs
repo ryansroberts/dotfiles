@@ -17,34 +17,29 @@
                                      osx
                                      latex
                                      restclient
-                                     twitter
                                      javascript
                                      python
                                      html
                                      csharp
                                      markdown
                                      ess
-                                     evernote
                                      fsharp
                                      auto-completion
                                      syntax-checking
                                      org
                                      dockerfile
                                      floobits
-                                     slime
                                      vagrant
                                      smex
                                      evil-snipe
                                      vim-empty-lines
                                      colors
-                                     windows-scripts
-                                     themes-megapack
                                      eyebrowse
                                      shell
                                      pandoc
-                                     emoji
                                      github
                                      git
+                                     gubbins
                                      version-control
                                     )
  ;; A list of packages and/or extensions that will not be install and loaded.
@@ -84,7 +79,7 @@ dotspacemacs-themes '(gruvbox
                       spacemacs-dark
                       spacemacs-light
                       leuven
-                         zenburn)
+                      zenburn)
  dotspacemacs-guide-key-delay 0.4
  ;; If non nil the frame is fullscreen when Emacs starts up (Emacs 24.4+ only).
  dotspacemacs-fullscreen-at-startup nil
@@ -118,7 +113,7 @@ dotspacemacs-themes '(gruvbox
  dotspacemacs-default-package-repository nil
 
  colors-enable-rainbow-identifiers nil
- colors-enable-nyan-cat-progress-bar t
+ colors-enable-nyan-cat-progress-bar nil
  scroll-bar-mode nil
  show-trailing-whitespace nil
 

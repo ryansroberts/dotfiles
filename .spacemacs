@@ -10,38 +10,53 @@
  ;; Paths must have a trailing slash (ie. `~/.mycontribs/')
  dotspacemacs-configuration-layer-path '()
  ;; List of configuration layers to load.
- dotspacemacs-configuration-layers '(gubbins
-                                     pretty
-                                     fasd
+ dotspacemacs-configuration-layers '(fasd
                                      dash
                                      osx
                                      latex
                                      restclient
+                                     better-defaults
+                                     react
                                      javascript
-                                     python
                                      html
                                      csharp
                                      markdown
-                                     ess
-                                     fsharp
                                      auto-completion
                                      syntax-checking
                                      org
+                                     fsharp
                                      dockerfile
                                      floobits
+                                     yaml
+                                     c-c++
                                      vagrant
                                      smex
+                                     emoji
                                      evil-snipe
+                                     emacs-lisp
                                      vim-empty-lines
                                      colors
-                                     eyebrowse
                                      shell
                                      pandoc
                                      github
                                      git
-                                     gubbins
                                      version-control
-                                    )
+                                     vala
+                                     terraform
+                                     puppet
+                                     go
+                                     search-engine
+                                     eyebrowse
+                                     )
+ ;; List of additional packages that will be installed without being
+ ;; wrapped in a layer. If you need some configuration for these
+ ;; packages then consider to create a layer, you can also put the
+ ;; configuration in `dotspacemacs/config'.
+ dotspacemacs-additional-packages '(
+                                    org-trello
+                                    flycheck-flow
+                                    grunt
+                                   )
  ;; A list of packages and/or extensions that will not be install and loaded.
  dotspacemacs-excluded-packages '()
  )
@@ -117,12 +132,12 @@ dotspacemacs-themes '(gruvbox
  scroll-bar-mode nil
  show-trailing-whitespace nil
 
- dotspacemacs-search-tools '("pt" "ack" "grep")
+ dotspacemacs-search-tools '("pt" "ag" "grep")
 
  golden-ratio-mode t
  helm-display-header-line nil
- inferior-fsharp-program "/usr/bin/fsharpi --readline-"
- fsharp-build-command "/usr/bin/xbuild /nologo"
+ inferior-fsharp-program "fsharpi --readline-"
+ fsharp-build-command "xbuild"
 )
 
 ;; Initialization Hooks
@@ -131,30 +146,120 @@ dotspacemacs-themes '(gruvbox
 (defun dotspacemacs/init ()
   "User initialization for Spacemacs. This function is called at the very
  startup."
-
 )
-
-(defun dotspacemacs/config ()
+(defun dotspacemacs/user-config ()
 ;;Bigger, fatter helm mini menu that includes projectile files and pwd content
 (require 'helm-projectile)
 (setq helm-mini-default-sources '(helm-source-buffers-list
-                                  helm-source-recentf
                                   helm-source-bookmarks
                                   helm-source-projectile-files-list
-                                  helm-source-projectile-projects
-                                  helm-source-buffer-not-found))
+                                  helm-source-projectile-projects))
+  (global-set-key (kbd "s-<return>") 'inferior-fsharp-eval-region)
+  ;; text size
+  (global-set-key (kbd "C-+") 'text-scale-increase)
+  (global-set-key (kbd "C-=") 'text-scale-increase)
+  (global-set-key (kbd "C--") 'text-scale-decrease)
+  ;; window movement
+  (global-set-key (kbd "s-h") 'windmove-left)
+  (global-set-key (kbd "s-l") 'windmove-right)
+  (global-set-key (kbd "s-j") 'windmove-down)
+  (global-set-key (kbd "s-k") 'windmove-up)
+  (global-set-key (kbd "M-<tab>") 'spacemacs//workspaces-eyebrowse-next-window-config-n)
+  (global-set-key (kbd "s-1") 'eyebrowse-switch-to-window-config-1)
+  (global-set-key (kbd "s-2") 'eyebrowse-switch-to-window-config-2)
+  (global-set-key (kbd "s-3") 'eyebrowse-switch-to-window-config-3)
+  (global-set-key (kbd "s-4") 'eyebrowse-switch-to-window-config-4)
+  (global-set-key (kbd "s-5") 'eyebrowse-switch-to-window-config-5)
+  (global-set-key (kbd "s-6") 'eyebrowse-switch-to-window-config-6)
+  (global-set-key (kbd "s-7") 'eyebrowse-switch-to-window-config-7)
+  (global-set-key (kbd "s-8") 'eyebrowse-switch-to-window-config-8)
+  (global-set-key (kbd "s-9") 'eyebrowse-switch-to-window-config-9)
+  (global-set-key (kbd "H-<backspace>") 'delete-char)
+  ;; whitespace
+  (global-whitespace-mode)
+  (setq whitespace-style '(trailing tabs tab-mark))
+  (setq vc-follow-symlinks t)
+  ;; (define-key global-map (kbd "s-j") 'ace-jump-mode)
+
+  ;; better than vim-vinegar
+  (require 'dired)
+  (define-key evil-normal-state-map (kbd "-") 'dired-jump)
+  (define-key dired-mode-map (kbd "-") 'dired-up-directory)
+  ;; company mode
+  (setq company-idle-delay 0.03)
+  (setq company-minimum-prefix-length 2)
+  (setq company-require-match 'nil)
+  (setq company-show-numbers 't)
+  ;; use flex matching for company
+  (setq omnisharp-company-match-type 'company-match-flx)
+  (setq gc-cons-threshold 20000000)
+  (setq fsharp-ac-blocking-timeout 1)
+
+(company-quickhelp-mode 1)
 (global-company-mode)
-(setq-default dotspacemacs-configuration-layers
-  '(auto-completion :variables
-                    auto-completion-enable-company-help-tooltip t))
 
 (global-set-key (kbd "§") 'helm-mini)
+(setq locate-command "mdfind")
+
+(setq-default dotspacemacs-configuration-layers
+              '(auto-completion :variables
+                                 auto-completion-enable-snippets-in-popup t))
+(setq-default dotspacemacs-configuration-layers
+              '(auto-completion :variables
+                                auto-completion-enable-help-tooltip t))
+(setq-default dotspacemacs-configuration-layers
+              '(auto-completion :variables
+                                auto-completion-enable-sort-by-usage t))
+
+;;Uml diagram support
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '(;; other Babel languages
+   (plantuml . t)))
+(setq org-plantuml-jar-path
+      (expand-file-name "~/plantuml.jar"))
 
 (defun smaller-font-change ()
   "Set current buffer to use variable-width font."
   (variable-pitch-mode 1)
   (text-scale-decrease 0.5 )
   )
+(when (window-system)
+(set-default-font "Fira Code"))
+(let ((alist '((33 . ".\\(?:\\(?:==\\)\\|[!=]\\)")
+               (35 . ".\\(?:[(?[_{]\\)")
+               (38 . ".\\(?:\\(?:&&\\)\\|&\\)")
+               (42 . ".\\(?:\\(?:\\*\\*\\)\\|[*/]\\)")
+               (43 . ".\\(?:\\(?:\\+\\+\\)\\|\\+\\)")
+               (45 . ".\\(?:\\(?:-[>-]\\|<<\\|>>\\)\\|[<>}~-]\\)")
+               (46 . ".\\(?:\\(?:\\.[.<]\\)\\|[.=]\\)")
+               (47 . ".\\(?:\\(?:\\*\\*\\|//\\|==\\)\\|[*/=>]\\)")
+               (58 . ".\\(?:[:=]\\)")
+               (59 . ".\\(?:;\\)")
+               (60 . ".\\(?:\\(?:!--\\)\\|\\(?:\\$>\\|\\*>\\|\\+>\\|--\\|<[<=-]\\|=[<=>]\\||>\\)\\|[/<=>|-]\\)")
+               (61 . ".\\(?:\\(?:/=\\|:=\\|<<\\|=[=>]\\|>>\\)\\|[<=>~]\\)")
+               (62 . ".\\(?:\\(?:=>\\|>[=>-]\\)\\|[=>-]\\)")
+               (63 . ".\\(?:[:=?]\\)")
+               (92 . ".\\(?:\\(?:\\\\\\\\\\)\\|\\\\\\)")
+               (94 . ".\\(?:=\\)")
+               (123 . ".\\(?:-\\)")
+               (124 . ".\\(?:\\(?:|[=|]\\)\\|[=>|]\\)")
+               (126 . ".\\(?:[=@~-]\\)")
+             )
+      ))
+(dolist (char-regexp alist)
+  (set-char-table-range composition-function-table (car char-regexp)
+                        `([,(cdr char-regexp) 0 font-shape-gstring]))))
+
+;;(add-to-list 'org-latex-classes
+;;             '("koma-article"
+;;               "\\documentclass{scrartcl}"
+;;               ("\\section{%s}" . "\\section*{%s}")
+;;               ("\\subsection{%s}" . "\\subsection*{%s}")
+;;               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+;;               ("\\paragraph{%s}" . "\\paragraph*{%s}")
+;;               ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+
 )
 
 
@@ -170,20 +275,11 @@ dotspacemacs-themes '(gruvbox
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(ahs-case-fold-search nil)
- '(ahs-default-range (quote ahs-range-whole-buffer))
- '(ahs-idle-interval 0.25)
- '(ahs-idle-timer 0 t)
- '(ahs-inhibit-face-list nil)
- '(hexl-bits 32)
- '(js2-include-node-externs t)
- '(magit-use-overlays nil)
- '(ring-bell-function (quote ignore) t))
+ '(paradox-github-token t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(company-tooltip-common ((t (:inherit company-tooltip :weight bold :underline nil))))
- '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil))))
- '(whitespace-empty ((t nil))))
+ '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))
